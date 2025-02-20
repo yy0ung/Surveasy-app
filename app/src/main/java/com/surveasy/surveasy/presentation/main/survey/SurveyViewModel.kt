@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.surveasy.surveasy.domain.base.BaseState
 import com.surveasy.surveasy.domain.usecase.CreateResponseUseCase
 import com.surveasy.surveasy.domain.usecase.LoadImageUseCase
+import com.surveasy.surveasy.domain.usecase.QueryPanelWatermarkInfoUseCase
 import com.surveasy.surveasy.domain.usecase.QuerySurveyDetailUseCase
 import com.surveasy.surveasy.presentation.main.survey.mapper.toSurveyDetailData
+import com.surveasy.surveasy.presentation.main.survey.mapper.toSurveyWatermarkData
 import com.surveasy.surveasy.presentation.util.ErrorCode.CODE_400
 import com.surveasy.surveasy.presentation.util.ErrorCode.CODE_404
 import com.surveasy.surveasy.presentation.util.ErrorCode.CODE_409
@@ -38,6 +40,7 @@ class SurveyViewModel @Inject constructor(
     private val querySurveyDetailUseCase: QuerySurveyDetailUseCase,
     private val loadImageUseCase: LoadImageUseCase,
     private val createResponseUseCase: CreateResponseUseCase,
+    private val queryPanelWatermarkInfoUseCase: QueryPanelWatermarkInfoUseCase,
 ) : ViewModel() {
     private val sId = MutableStateFlow(0)
     val timer = MutableStateFlow(3)
@@ -123,7 +126,28 @@ class SurveyViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun navigateToSurvey() = viewModelScope.launch { _events.emit(SurveyEvents.NavigateToSurvey) }
+    fun navigateToSurvey() {
+        viewModelScope.launch { _events.emit(SurveyEvents.NavigateToSurvey) }
+        queryPanelWatermarkInfoUseCase().onEach { state ->
+            when (state) {
+                is BaseState.Success -> {
+                    state.data.panelWatermarkInfo?.toSurveyWatermarkData().apply {
+                        _uiState.update { wm ->
+                            wm.copy(watermark = this?.watermark ?: "unknown")
+                        }
+                    }
+                }
+
+                is BaseState.Error -> {
+                    _events.emit(
+                        if (state.code == CODE_404) SurveyEvents.ShowSnackBar(
+                            INVALID_SURVEY_ERROR
+                        ) else SurveyEvents.ShowSnackBar(DATA_ERROR)
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
     fun navigateToProof() = viewModelScope.launch { _events.emit(SurveyEvents.NavigateToProof) }
 
@@ -161,4 +185,5 @@ data class SurveyUiState(
     val surveyDescription: String = "",
     val isBtnEnable: Boolean = false,
     val link: String = "",
+    val watermark: String = "",
 )
