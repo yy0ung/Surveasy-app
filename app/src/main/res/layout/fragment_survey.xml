@@ -49,6 +49,19 @@
             app:layout_constraintTop_toTopOf="@id/v_survey_bar" />
 
         <TextView
+            android:id="@+id/tv_watermark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:rotation="-25"
+            android:text="@{vm.uiState.watermark}"
+            android:textColor="#B2B2B2B2"
+            android:textSize="17dp"
+            app:layout_constraintBottom_toTopOf="@id/wv_form"
+            app:layout_constraintEnd_toEndOf="@id/guide_end"
+            app:layout_constraintStart_toStartOf="@id/guide_begin"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/tv_title"
             style="@style/TextMediumBoldFix"
             android:layout_width="0dp"
