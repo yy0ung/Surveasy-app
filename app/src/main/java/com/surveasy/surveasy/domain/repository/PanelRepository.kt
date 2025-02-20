@@ -5,6 +5,7 @@ import com.surveasy.surveasy.domain.model.AuthProvider
 import com.surveasy.surveasy.domain.model.KakaoInfo
 import com.surveasy.surveasy.domain.model.PanelDetailInfo
 import com.surveasy.surveasy.domain.model.PanelInfo
+import com.surveasy.surveasy.domain.model.PanelWatermark
 import com.surveasy.surveasy.domain.model.Register
 import com.surveasy.surveasy.domain.model.Token
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +42,8 @@ interface PanelRepository {
     fun queryPanelInfo(): Flow<BaseState<PanelInfo>>
 
     fun queryPanelDetailInfo(): Flow<BaseState<PanelDetailInfo>>
+
+    fun queryPanelWatermarkInfo(): Flow<BaseState<PanelWatermark>>
 
     fun editPanelInfo(
         phoneNumber: String,

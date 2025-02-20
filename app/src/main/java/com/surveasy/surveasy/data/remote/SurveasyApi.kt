@@ -15,6 +15,7 @@ import com.surveasy.surveasy.data.model.response.HomeSurveyResponse
 import com.surveasy.surveasy.data.model.response.KakaoInfoResponse
 import com.surveasy.surveasy.data.model.response.PanelDetailInfoResponse
 import com.surveasy.surveasy.data.model.response.PanelInfoResponse
+import com.surveasy.surveasy.data.model.response.PanelWatermarkResponse
 import com.surveasy.surveasy.data.model.response.RegisterResponse
 import com.surveasy.surveasy.data.model.response.SurveyDetailInfoResponse
 import com.surveasy.surveasy.data.model.response.SurveyResponse
@@ -57,6 +58,9 @@ interface SurveasyApi {
     suspend fun editPanelInfo(
         @Body body: EditInfoRequest
     ): Response<Unit>
+
+    @GET("panel/watermark")
+    suspend fun queryPanelWatermarkInfo(): Response<PanelWatermarkResponse>
 
     @GET("panel/signout")
     suspend fun signout(): Response<Unit>
